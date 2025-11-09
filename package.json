@@ -1,0 +1,58 @@
+{
+  "name": "@tkr/llm-client",
+  "version": "0.1.0",
+  "description": "Generic LLM client library with Claude SDK and local LLM server support",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TuckerTucker/tkr-llm-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TuckerTucker/tkr-llm-client/issues"
+  },
+  "homepage": "https://github.com/TuckerTucker/tkr-llm-client#readme",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "rebuild": "npm run clean && npm run build",
+    "test": "echo \"Tests not yet implemented\"",
+    "prepublishOnly": "npm run rebuild"
+  },
+  "keywords": [
+    "llm",
+    "claude",
+    "ai",
+    "machine-learning",
+    "mlx",
+    "local-llm",
+    "typescript",
+    "fastapi",
+    "anthropic"
+  ],
+  "author": "Tucker",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^1.0.0"
+  },
+  "peerDependencies": {
+    "mlx-lm": "^0.8.0"
+  },
+  "peerDependenciesMeta": {
+    "mlx-lm": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  },
+  "files": [
+    "dist",
+    "llm_server",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
