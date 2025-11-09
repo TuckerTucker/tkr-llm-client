@@ -4,13 +4,15 @@ Generic LLM client library with Claude SDK and local LLM server support.
 
 ## Features
 
-- **Claude Code SDK Integration**: Full access to Claude's tool ecosystem
+- **Claude Agent SDK Integration**: Full access to Claude's tool ecosystem with agent capabilities
 - **Local LLM Server**: Run MLX models on Apple Silicon
-- **Unified Interface**: Single API for both Claude SDK and local LLM
+- **Unified Interface**: Single API for both Claude Agent SDK and local LLM
 - **Framework-Agnostic**: Use in any TypeScript/Node.js project
 - **Event-Driven**: Subscribe to thinking blocks, messages, and errors
 - **Retry Logic**: Built-in exponential backoff for resilience
 - **TypeScript**: Full type safety with comprehensive TypeScript support
+- **Budget Control**: Set maximum spending limits with `maxBudgetUsd`
+- **Session Management**: Resume and fork conversations with persistent sessions
 
 ## Installation
 

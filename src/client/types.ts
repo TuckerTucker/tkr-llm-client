@@ -71,6 +71,43 @@ export interface LLMQueryOptions {
    * Examples: 'aspirational', 'task-123', 'analysis'
    */
   context?: string;
+
+  /**
+   * Model to use for the query
+   * @default 'claude-sonnet-4-5'
+   * Examples: 'claude-sonnet-4-5', 'claude-opus-4', 'claude-haiku-4'
+   */
+  model?: string;
+
+  /**
+   * Working directory for file operations
+   * @default process.cwd()
+   */
+  workingDirectory?: string;
+
+  /**
+   * Maximum budget in USD for the query
+   * Agent will stop if cost exceeds this limit
+   */
+  maxBudgetUsd?: number;
+
+  /**
+   * Sources to load settings from
+   * - 'user': Load user-level settings
+   * - 'project': Load project-level settings (.claude/)
+   * - 'local': Load local settings
+   */
+  settingSources?: Array<'user' | 'project' | 'local'>;
+
+  /**
+   * Resume from a previous session
+   */
+  resume?: string;
+
+  /**
+   * Fork the session to create a new branch
+   */
+  forkSession?: boolean;
 }
 
 /**

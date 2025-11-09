@@ -1,12 +1,12 @@
 /**
  * Claude SDK Client
  *
- * Generic wrapper around Claude Code SDK
+ * Generic wrapper around Claude Agent SDK
  * Refactored from ACE's ClaudeCodeAdapter to be framework-agnostic
  */
 
 import { EventEmitter } from 'events';
-import { query } from '@anthropic-ai/claude-code';
+import { query } from '@anthropic-ai/claude-agent-sdk';
 import { ILLMClient } from './interfaces';
 import { LLMMessage, LLMQueryOptions, SubagentResult, LLMClientConfig } from './types';
 import { extractThinkingBlocks } from '../utils/thinking';
@@ -14,7 +14,7 @@ import { extractThinkingBlocks } from '../utils/thinking';
 /**
  * Claude SDK Client
  *
- * Provides query, direct query, and subagent execution using Claude Code SDK
+ * Provides query, direct query, and subagent execution using Claude Agent SDK
  */
 export class ClaudeSDKClient extends EventEmitter implements ILLMClient {
   private abortController: AbortController;
@@ -40,7 +40,7 @@ export class ClaudeSDKClient extends EventEmitter implements ILLMClient {
   }
 
   /**
-   * Query Claude Code SDK with streaming response
+   * Query Claude Agent SDK with streaming response
    */
   async *query(prompt: string, options: Partial<LLMQueryOptions> = {}): AsyncIterable<LLMMessage> {
     // Apply config defaults with option overrides
@@ -50,7 +50,7 @@ export class ClaudeSDKClient extends EventEmitter implements ILLMClient {
     const context = options.context ?? this.context;
 
     // Log outgoing query
-    console.log('\n🚀 [ClaudeSDKClient] Sending query to Claude Code SDK');
+    console.log('\n🚀 [ClaudeSDKClient] Sending query to Claude Agent SDK');
     console.log('📝 Prompt preview:', prompt.substring(0, 200) + (prompt.length > 200 ? '...' : ''));
     console.log('⚙️  Query options:', {
       maxMessages,
@@ -58,7 +58,8 @@ export class ClaudeSDKClient extends EventEmitter implements ILLMClient {
       timeout,
       context: context || 'none',
       systemPrompt: options.systemPrompt ? 'provided' : 'none',
-      allowedTools: options.allowedTools || 'all'
+      allowedTools: options.allowedTools || 'all',
+      model: options.model || 'claude-sonnet-4-5'
     });
 
     let messageCount = 0;
@@ -82,12 +83,13 @@ export class ClaudeSDKClient extends EventEmitter implements ILLMClient {
 
     try {
       const queryOptions: any = {
+        model: options.model || 'claude-sonnet-4-5',
         maxTurns,
-        abortController: this.abortController
+        workingDirectory: options.workingDirectory || process.cwd()
       };
 
       if (options.systemPrompt) {
-        queryOptions.customSystemPrompt = options.systemPrompt;
+        queryOptions.systemPrompt = options.systemPrompt;
       }
 
       if (options.allowedTools) {
@@ -96,7 +98,10 @@ export class ClaudeSDKClient extends EventEmitter implements ILLMClient {
 
       if (options.mcpConfig) {
         queryOptions.mcpServers = {
-          [options.mcpConfig]: { type: 'stdio' as const, command: options.mcpConfig }
+          [options.mcpConfig]: {
+            command: options.mcpConfig,
+            args: []
+          }
         };
       }
 
@@ -108,7 +113,11 @@ export class ClaudeSDKClient extends EventEmitter implements ILLMClient {
         queryOptions.permissionMode = options.permissionMode;
       }
 
-      console.log('🔄 Calling Claude Code SDK query()...');
+      if (options.maxBudgetUsd !== undefined) {
+        queryOptions.maxBudgetUsd = options.maxBudgetUsd;
+      }
+
+      console.log('🔄 Calling Claude Agent SDK query()...');
 
       for await (const message of query({
         prompt,

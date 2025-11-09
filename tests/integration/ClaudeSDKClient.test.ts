@@ -1,16 +1,16 @@
 /**
  * Integration tests for ClaudeSDKClient
  *
- * Tests SDK client with mocked @anthropic-ai/claude-code
+ * Tests SDK client with mocked @anthropic-ai/claude-agent-sdk
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ClaudeSDKClient } from '../../src/client/ClaudeSDKClient';
 import { LLMClientConfig } from '../../src/client/types';
 
-// Mock the Claude Code SDK
+// Mock the Claude Agent SDK
 const mockQuery = vi.fn();
-vi.mock('@anthropic-ai/claude-code', () => ({
+vi.mock('@anthropic-ai/claude-agent-sdk', () => ({
   query: (params: any) => mockQuery(params),
 }));
 
@@ -119,7 +119,11 @@ describe('ClaudeSDKClient', () => {
 
       expect(mockQuery).toHaveBeenCalledWith(
         expect.objectContaining({
-          options: expect.objectContaining({ maxTurns: 3 }),
+          options: expect.objectContaining({
+            maxTurns: 3,
+            model: 'claude-sonnet-4-5',
+            workingDirectory: expect.any(String)
+          }),
         })
       );
     });
@@ -218,7 +222,7 @@ describe('ClaudeSDKClient', () => {
       expect(mockQuery).toHaveBeenCalledWith(
         expect.objectContaining({
           options: expect.objectContaining({
-            customSystemPrompt: 'Custom prompt',
+            systemPrompt: 'Custom prompt',
           }),
         })
       );

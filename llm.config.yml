@@ -7,11 +7,12 @@ server:
   # Enable/disable local LLM integration
   enabled: true
 
-  # Server port (default: 42002, following tkr-context-kit port scheme)
-  port: 42002
-
+  # Host and Port are used in anthropicBaseUrl when using Claude Agent SDK with local inference
   # Server host binding (default: 127.0.0.1 for localhost only)
   host: 127.0.0.1
+
+  # Server port (default: 42002, following tkr-context-kit port scheme)
+  port: 42002
 
   # Number of uvicorn workers (default: 1, increase for concurrent requests)
   workers: 1
@@ -42,7 +43,7 @@ server:
 # Model Configuration
 model:
   # Model name to load (gpt-oss-20b)
-  # gpt-oss-20b: Harmony format support, uses mlx-community/gpt-oss-20b-MXFP4-Q8
+  # gpt-oss-20b: Harmony format support, defaults to mlx-community/gpt-oss-20b-MXFP4-Q8 in /llm_server/models/registry.py
   # MXFP4-Q8 is mixed precision quantization (4-bit weights, 8-bit activations)
   # Requires ~12GB model memory (16GB+ RAM systems recommended)
   # Note: Can use short name or full HuggingFace path
@@ -68,12 +69,13 @@ huggingface:
 
 # Integration Settings
 integration:
-  # SDK sends requests directly to local LLM server (Anthropic-compatible API)
-  anthropicBaseUrl: http://127.0.0.1:42002
-
-  # Enable fallback to cloud providers if local LLM fails
+  # Enable fallback to Anthropic Claude if local LLM fails
   # Requires ANTHROPIC_API_KEY in .env file
   enableCloudFallback: false
+
+  # Required so SDK sends requests directly to local LLM server (Anthropic-compatible API)
+  # See Host & Port in Server
+  anthropicBaseUrl: http://127.0.0.1:42002
 
   # Disable streaming for better stability with Harmony format parsing
   streaming: false
