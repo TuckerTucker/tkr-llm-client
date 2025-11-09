@@ -1,0 +1,79 @@
+# LLM Client Configuration
+# Non-sensitive configuration for @tkr/llm-client
+# Secrets (API keys) should be stored in .env file
+
+# Server Configuration
+server:
+  # Enable/disable local LLM integration
+  enabled: true
+
+  # Server port (default: 42002, following tkr-context-kit port scheme)
+  port: 42002
+
+  # Server host binding (default: 127.0.0.1 for localhost only)
+  host: 127.0.0.1
+
+  # Number of uvicorn workers (default: 1, increase for concurrent requests)
+  workers: 1
+
+  # Path to Python interpreter (use venv with all dependencies)
+  pythonPath: ./.venv/bin/python
+
+  # Path to the LLM server script (relative to project root)
+  # Note: LLM server is now in @tkr/llm-client library package
+  # PYTHONPATH is automatically set to packages/llm-client/ by LLMServerManager
+  scriptPath: ./packages/llm-client/llm_server/server.py
+
+  # Health check settings
+  healthCheck:
+    # Health check timeout in milliseconds (default: 300000 = 5 minutes)
+    # Set high to allow for initial model download (~11GB for gpt-oss-20b)
+    timeout: 120000
+
+    # Health check polling interval in milliseconds (default: 1000 = 1 second)
+    interval: 1000
+
+  # Auto-restart LLM server if it crashes (default: false)
+  autoRestart: false
+
+  # Logging level for LLM server (debug | info | warn | error)
+  logLevel: info
+
+# Model Configuration
+model:
+  # Model name to load (gpt-oss-20b)
+  # gpt-oss-20b: Harmony format support, uses mlx-community/gpt-oss-20b-MXFP4-Q8
+  # MXFP4-Q8 is mixed precision quantization (4-bit weights, 8-bit activations)
+  # Requires ~12GB model memory (16GB+ RAM systems recommended)
+  # Note: Can use short name or full HuggingFace path
+  name: gpt-oss-20b
+
+  # Path to local models directory (bypasses default ~/.cache/huggingface)
+  # All Hugging Face models will download to this location
+  path: ./models
+
+  # Device to use for inference (auto | mps | cpu)
+  # 'auto' will use MPS on Apple Silicon, CPU otherwise
+  device: auto
+
+  # Quantization mode (int4 | int8 | fp16 | none)
+  # Note: Ignored for pre-quantized MLX models (gpt-oss-20b uses MXFP4-Q8 quantization)
+  # This setting only applies when loading unquantized models
+  quantization: int8
+
+# Hugging Face Configuration
+huggingface:
+  # Hugging Face cache directory (set to models dir to avoid default cache)
+  home: ./models
+
+# Integration Settings
+integration:
+  # SDK sends requests directly to local LLM server (Anthropic-compatible API)
+  anthropicBaseUrl: http://127.0.0.1:42002
+
+  # Enable fallback to cloud providers if local LLM fails
+  # Requires ANTHROPIC_API_KEY in .env file
+  enableCloudFallback: false
+
+  # Disable streaming for better stability with Harmony format parsing
+  streaming: false

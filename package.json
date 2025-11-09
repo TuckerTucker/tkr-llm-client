@@ -37,7 +37,8 @@
   "author": "Tucker",
   "license": "MIT",
   "dependencies": {
-    "@anthropic-ai/claude-code": "^1.0.0"
+    "@anthropic-ai/claude-code": "^1.0.0",
+    "js-yaml": "^4.1.0"
   },
   "peerDependencies": {
     "mlx-lm": "^0.8.0"
@@ -48,6 +49,7 @@
     }
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.0.0",
     "@vitest/ui": "^4.0.8",
     "typescript": "^5.3.0",

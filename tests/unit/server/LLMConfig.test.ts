@@ -49,9 +49,12 @@ describe('loadLLMConfig', () => {
 
     expect(config.enabled).toBe(true);
     expect(config.port).toBe(42002);
-    expect(config.serverScript).toBe('./llm-server/server.py');
-    expect(config.healthCheckUrl).toBe('http://localhost:42002/health');
-    expect(config.healthCheckTimeout).toBe(300000);
+    // YAML config has different scriptPath than old default
+    expect(config.serverScript).toBe('./packages/llm-client/llm_server/server.py');
+    // YAML config uses 127.0.0.1 instead of localhost
+    expect(config.healthCheckUrl).toBe('http://127.0.0.1:42002/health');
+    // YAML config has 120000ms timeout instead of 300000ms
+    expect(config.healthCheckTimeout).toBe(120000);
     expect(config.healthCheckInterval).toBe(1000);
     expect(config.autoRestart).toBe(false);
     expect(config.logLevel).toBe('info');
@@ -62,7 +65,8 @@ describe('loadLLMConfig', () => {
     const config = loadLLMConfig();
 
     expect(config.port).toBe(3000);
-    expect(config.healthCheckUrl).toBe('http://localhost:3000/health');
+    // YAML config uses 127.0.0.1 as default host
+    expect(config.healthCheckUrl).toBe('http://127.0.0.1:3000/health');
   });
 
   it('should disable when LLM_ENABLED=false', () => {
@@ -145,7 +149,8 @@ describe('loadLLMConfig', () => {
     process.env['LLM_PORT'] = '8080';
     const config = loadLLMConfig();
 
-    expect(config.healthCheckUrl).toBe('http://localhost:8080/health');
+    // YAML config uses 127.0.0.1 as default host
+    expect(config.healthCheckUrl).toBe('http://127.0.0.1:8080/health');
   });
 
   it('should use default values for missing env vars', () => {
