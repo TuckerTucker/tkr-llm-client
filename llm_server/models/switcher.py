@@ -1,8 +1,10 @@
 """
 Model switching utilities for runtime model changes.
 
-Provides functions to hot-swap models without restarting the application,
-with proper cleanup and memory management.
+NOTE: This module is deprecated as only gpt-oss-20b is supported.
+Model switching functionality is no longer needed.
+
+DEPRECATED - Kept for backward compatibility only.
 """
 
 import logging
@@ -43,13 +45,12 @@ def switch_model(
         - model_info: ModelInfo for new model if successful, None otherwise
 
     Example:
+        >>> # NOTE: Model switching is deprecated - only gpt-oss-20b is supported
         >>> from llm_server.models import ModelLoader, switch_model
         >>> from llm_server.config import ModelConfig
-        >>> loader = ModelLoader(ModelConfig(model_name="phi-3-mini"))
+        >>> loader = ModelLoader(ModelConfig(model_name="gpt-oss-20b"))
         >>> loader.load()
-        >>> success, msg, info = switch_model(loader, "mistral-7b")
-        >>> print(msg)
-        "✓ Switched to mistral-7b (4bit) on mps - 4500MB"
+        >>> # switch_model is no longer needed with single model support
     """
     from .registry import get_model_spec, validate_model_name
     from ..devices import DeviceDetector
@@ -154,11 +155,12 @@ def validate_switch_feasibility(
         - message: Explanation or warning
 
     Example:
+        >>> # DEPRECATED - Only gpt-oss-20b is supported
         >>> is_feasible, msg = validate_switch_feasibility(
-        ...     "phi-3-mini", "mistral-7b", "4bit"
+        ...     "gpt-oss-20b", "gpt-oss-20b", "MXFP4-Q8"
         ... )
         >>> print(msg)
-        "✓ Switch feasible: mistral-7b requires ~4500MB, 8192MB available"
+        "✗ New model is the same as current model"
     """
     from .registry import get_model_spec, validate_model_name
 
@@ -204,33 +206,16 @@ def get_switch_recommendation(
         - reason: Why this model is recommended
 
     Example:
-        >>> model, reason = get_switch_recommendation(2500, "long_context")
+        >>> # DEPRECATED - Only gpt-oss-20b is supported
+        >>> model, reason = get_switch_recommendation(12000, "general")
         >>> print(f"{model}: {reason}")
-        "phi-3-mini-128k: 128K context window, similar memory footprint"
+        "gpt-oss-20b: Only supported model - Harmony format optimized"
     """
     from .registry import RECOMMENDED_MODELS, get_model_spec
 
-    # Get base recommendation for use case
-    recommended = RECOMMENDED_MODELS.get(target_use_case, "phi-3-mini")
-    spec = get_model_spec(recommended)
+    # Only gpt-oss-20b is supported now
+    return ("gpt-oss-20b", "Only supported model - Harmony format optimized")
 
-    if spec is None:
-        return ("phi-3-mini", "Default model")
-
-    # Check if recommended model fits in similar memory budget
-    recommended_memory = spec["memory_estimate_mb"]
-
-    # If significantly more memory needed, suggest lighter alternative
-    if recommended_memory > current_memory_mb * 1.5:
-        # Find lighter model for use case
-        lighter_alternatives = {
-            "long_context": "phi-3-mini-128k",  # Still has long context
-            "general": "phi-3-mini",  # Lighter general model
-            "quality": "mistral-7b",  # Lighter than llama but good quality
-            "multilingual": "qwen-2.5-3b",  # Lighter multilingual
-        }
-
-        alternative = lighter_alternatives.get(target_use_case, "phi-3-mini")
         alt_spec = get_model_spec(alternative)
 
         if alt_spec:

@@ -124,8 +124,8 @@ class MemoryManager:
         Estimate memory needed for a model with given quantization.
 
         Args:
-            model_name: Model identifier (e.g., "phi-3-mini", "mistral-7b")
-            quantization: Quantization level ("4bit", "8bit", "fp16")
+            model_name: Model identifier (e.g., "gpt-oss-20b")
+            quantization: Quantization level ("4bit", "8bit", "fp16", "MXFP4-Q8")
 
         Returns:
             Estimated memory requirement in MB
@@ -135,15 +135,8 @@ class MemoryManager:
             context length and other runtime factors. Includes ~20% overhead
             for KV cache and runtime buffers.
         """
-        # Base parameter counts (in billions)
+        # Only gpt-oss-20b is supported
         param_counts = {
-            "phi-3-mini": 3.8,  # 3.8B parameters
-            "phi-3": 3.8,
-            "mistral-7b": 7.2,  # 7.2B parameters
-            "mistral": 7.2,
-            "llama-3-8b": 8.0,  # 8B parameters
-            "llama-3": 8.0,
-            "llama": 8.0,
             "gpt-oss-20b": 20.0,  # 20B parameters
             "gpt-oss": 20.0,
         }
@@ -156,12 +149,12 @@ class MemoryManager:
                 params = value
                 break
 
-        # Default to 7B if unknown
+        # Default to gpt-oss-20b if unknown
         if params is None:
             logger.warning(
-                f"Unknown model '{model_name}', estimating for 7B parameters"
+                f"Unknown model '{model_name}', estimating for gpt-oss-20b (20B parameters)"
             )
-            params = 7.0
+            params = 20.0
 
         # Memory per parameter in bytes based on quantization
         bytes_per_param = {

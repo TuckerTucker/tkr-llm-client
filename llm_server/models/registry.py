@@ -22,96 +22,18 @@ class ModelSpec(TypedDict):
 
 
 # Registry of MLX-optimized models from mlx-community
-# All models are 4-bit quantized for efficient inference on Apple Silicon
 #
 # NOTE: For local model loading, set LLM_MODEL_PATH environment variable to override
 # the HuggingFace path. This allows loading from local directories without re-downloading.
 MLX_SUPPORTED_MODELS: dict[str, ModelSpec] = {
-    # OpenAI GPT-OSS (primary model for this project)
+    # OpenAI GPT-OSS (only supported model for this project)
     # To use local path: set LLM_MODEL_PATH=./models/gpt-oss-20b
     "gpt-oss-20b": {
         "path": "mlx-community/gpt-oss-20b-MXFP4-Q8",  # MLX-optimized mixed precision quantization
         "context_length": 2048,
         "quantization": "MXFP4-Q8",  # MLX mixed precision 4-bit/8-bit quantization
         "memory_estimate_mb": 12000,  # ~12GB estimated requirement
-        "description": "OpenAI GPT-OSS 20B - MLX quantized for alignment research (REQUIRES 16GB+ RAM)",
-    },
-    "phi-3-mini": {
-        "path": "mlx-community/Phi-3-mini-4k-instruct-4bit",
-        "context_length": 4096,
-        "quantization": "4bit",
-        "memory_estimate_mb": 2500,
-        "description": "Microsoft Phi-3 Mini (3.8B) - Fast and efficient, great for chat",
-    },
-    "phi-3-mini-128k": {
-        "path": "mlx-community/Phi-3-mini-128k-instruct-4bit",
-        "context_length": 128000,
-        "quantization": "4bit",
-        "memory_estimate_mb": 2700,
-        "description": "Microsoft Phi-3 Mini with 128K context - Ideal for long conversations",
-    },
-    "mistral-7b": {
-        "path": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
-        "context_length": 8192,
-        "quantization": "4bit",
-        "memory_estimate_mb": 4500,
-        "description": "Mistral 7B Instruct v0.3 - Excellent general-purpose model",
-    },
-    "mistral-7b-v0.2": {
-        "path": "mlx-community/Mistral-7B-Instruct-v0.2-4bit",
-        "context_length": 8192,
-        "quantization": "4bit",
-        "memory_estimate_mb": 4500,
-        "description": "Mistral 7B Instruct v0.2 - Stable previous version",
-    },
-    "llama-3-8b": {
-        "path": "mlx-community/Meta-Llama-3-8B-Instruct-4bit",
-        "context_length": 8192,
-        "quantization": "4bit",
-        "memory_estimate_mb": 5000,
-        "description": "Meta Llama 3 8B Instruct - High quality instruction-following",
-    },
-    "llama-3.1-8b": {
-        "path": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
-        "context_length": 8192,
-        "quantization": "4bit",
-        "memory_estimate_mb": 5000,
-        "description": "Meta Llama 3.1 8B Instruct - Latest version with improvements",
-    },
-    "llama-3.2-3b": {
-        "path": "mlx-community/Llama-3.2-3B-Instruct-4bit",
-        "context_length": 8192,
-        "quantization": "4bit",
-        "memory_estimate_mb": 2200,
-        "description": "Meta Llama 3.2 3B Instruct - Lightweight and fast",
-    },
-    "gemma-2-9b": {
-        "path": "mlx-community/gemma-2-9b-it-4bit",
-        "context_length": 8192,
-        "quantization": "4bit",
-        "memory_estimate_mb": 5500,
-        "description": "Google Gemma 2 9B Instruct - Strong performance across tasks",
-    },
-    "gemma-2-2b": {
-        "path": "mlx-community/gemma-2-2b-it-4bit",
-        "context_length": 8192,
-        "quantization": "4bit",
-        "memory_estimate_mb": 1800,
-        "description": "Google Gemma 2 2B Instruct - Very lightweight",
-    },
-    "qwen-2.5-7b": {
-        "path": "mlx-community/Qwen2.5-7B-Instruct-4bit",
-        "context_length": 32768,
-        "quantization": "4bit",
-        "memory_estimate_mb": 4500,
-        "description": "Qwen 2.5 7B Instruct - Multilingual with long context",
-    },
-    "qwen-2.5-3b": {
-        "path": "mlx-community/Qwen2.5-3B-Instruct-4bit",
-        "context_length": 32768,
-        "quantization": "4bit",
-        "memory_estimate_mb": 2300,
-        "description": "Qwen 2.5 3B Instruct - Efficient multilingual model",
+        "description": "OpenAI GPT-OSS 20B - MLX quantized with Harmony format support (REQUIRES 16GB+ RAM)",
     },
 }
 
@@ -157,23 +79,11 @@ def get_models_by_size() -> dict[str, list[str]]:
     Returns:
         Dictionary with size categories and model lists
     """
-    small = []  # < 3GB
-    medium = []  # 3-5GB
-    large = []  # > 5GB
-
-    for name, spec in MLX_SUPPORTED_MODELS.items():
-        mem = spec["memory_estimate_mb"]
-        if mem < 3000:
-            small.append(name)
-        elif mem < 5000:
-            medium.append(name)
-        else:
-            large.append(name)
-
+    # Only gpt-oss-20b is supported (large model > 5GB)
     return {
-        "small": sorted(small),
-        "medium": sorted(medium),
-        "large": sorted(large),
+        "small": [],
+        "medium": [],
+        "large": ["gpt-oss-20b"],
     }
 
 
@@ -248,15 +158,15 @@ def validate_model_name(model_name: str) -> tuple[bool, str]:
 # Default model for this project (alignment research)
 DEFAULT_MODEL = "gpt-oss-20b"
 
-# Recommended models by use case
+# Only one model supported - gpt-oss-20b for all use cases
 RECOMMENDED_MODELS = {
-    "alignment_research": "gpt-oss-20b",  # Primary model for alignment testing
-    "chat": "phi-3-mini",  # Fast, efficient, great quality
-    "long_context": "phi-3-mini-128k",  # 128K context window
-    "general": "mistral-7b",  # Excellent all-around performance
-    "lightweight": "gemma-2-2b",  # Minimal memory footprint
-    "multilingual": "qwen-2.5-7b",  # Best for non-English
-    "quality": "llama-3.1-8b",  # Highest quality at reasonable size
+    "alignment_research": "gpt-oss-20b",
+    "chat": "gpt-oss-20b",
+    "long_context": "gpt-oss-20b",
+    "general": "gpt-oss-20b",
+    "lightweight": "gpt-oss-20b",
+    "multilingual": "gpt-oss-20b",
+    "quality": "gpt-oss-20b",
 }
 
 
@@ -265,9 +175,9 @@ def get_recommended_model(use_case: str = "chat") -> str:
     Get recommended model for a use case.
 
     Args:
-        use_case: Use case identifier (chat, long_context, general, etc.)
+        use_case: Use case identifier (ignored, always returns gpt-oss-20b)
 
     Returns:
-        Recommended model name
+        Model name (always "gpt-oss-20b")
     """
-    return RECOMMENDED_MODELS.get(use_case.lower(), DEFAULT_MODEL)
+    return "gpt-oss-20b"

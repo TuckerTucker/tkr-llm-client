@@ -42,7 +42,7 @@ export LLM_LOG_LEVEL=info
 
 # Model settings
 export LLM_MODEL_PATH=~/gpt-oss-20b (MLX)
-export LLM_MODEL_NAME=phi-3-mini  # or gpt-oss-20b
+export LLM_MODEL_NAME=gpt-oss-20b
 export LLM_DEVICE=auto  # auto, mps, cpu
 export LLM_QUANTIZATION=int4  # int4, int8, fp16, none
 
@@ -76,7 +76,7 @@ Expected response:
 {
   "status": "ok",
   "model_loaded": true,
-  "model_name": "phi-3-mini",
+  "model_name": "gpt-oss-20b",
   "uptime_seconds": 123.45
 }
 ```
@@ -93,7 +93,7 @@ curl http://localhost:42002/v1/models
 curl http://localhost:42002/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "phi-3-mini",
+    "model": "gpt-oss-20b",
     "messages": [
       {"role": "user", "content": "Hello, how are you?"}
     ],
@@ -108,7 +108,7 @@ curl http://localhost:42002/v1/chat/completions \
 curl http://localhost:42002/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "phi-3-mini",
+    "model": "gpt-oss-20b",
     "messages": [
       {"role": "user", "content": "Count to 5"}
     ],
@@ -142,7 +142,7 @@ List available models.
   "object": "list",
   "data": [
     {
-      "id": "phi-3-mini",
+      "id": "gpt-oss-20b",
       "object": "model",
       "created": 1234567890,
       "owned_by": "local"
@@ -158,7 +158,7 @@ Create chat completion.
 **Request**:
 ```json
 {
-  "model": "phi-3-mini",
+  "model": "gpt-oss-20b",
   "messages": [
     {"role": "system", "content": "You are a helpful assistant"},
     {"role": "user", "content": "Hello"}
@@ -179,7 +179,7 @@ Create chat completion.
   "id": "chatcmpl-1234567890-abc123",
   "object": "chat.completion",
   "created": 1234567890,
-  "model": "phi-3-mini",
+  "model": "gpt-oss-20b",
   "choices": [
     {
       "index": 0,
@@ -202,9 +202,9 @@ Create chat completion.
 
 Server-Sent Events format:
 ```
-data: {"id":"chatcmpl-...","object":"chat.completion.chunk","created":...,"model":"phi-3-mini","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
+data: {"id":"chatcmpl-...","object":"chat.completion.chunk","created":...,"model":"gpt-oss-20b","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
 
-data: {"id":"chatcmpl-...","object":"chat.completion.chunk","created":...,"model":"phi-3-mini","choices":[{"index":0,"delta":{"content":"Hello"},"finish_reason":null}]}
+data: {"id":"chatcmpl-...","object":"chat.completion.chunk","created":...,"model":"gpt-oss-20b","choices":[{"index":0,"delta":{"content":"Hello"},"finish_reason":null}]}
 
 data: [DONE]
 ```

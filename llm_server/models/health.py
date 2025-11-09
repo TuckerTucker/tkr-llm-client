@@ -43,7 +43,7 @@ def check_model_loaded(loader) -> tuple[bool, str]:
     Example:
         >>> from llm_server.models import ModelLoader
         >>> from llm_server.config import ModelConfig
-        >>> loader = ModelLoader(ModelConfig(model_name="phi-3-mini"))
+        >>> loader = ModelLoader(ModelConfig(model_name="gpt-oss-20b"))
         >>> is_loaded, msg = check_model_loaded(loader)
         >>> print(msg)
         "Model not loaded"
@@ -126,7 +126,7 @@ def get_health_status(loader) -> HealthStatus:
     Example:
         >>> from llm_server.models import ModelLoader
         >>> from llm_server.config import ModelConfig
-        >>> loader = ModelLoader(ModelConfig(model_name="phi-3-mini"))
+        >>> loader = ModelLoader(ModelConfig(model_name="gpt-oss-20b"))
         >>> loader.load()
         >>> status = get_health_status(loader)
         >>> print(f"Healthy: {status['overall_healthy']}")

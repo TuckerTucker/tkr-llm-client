@@ -1,8 +1,8 @@
 """
 Model utility tools for listing, downloading, and managing MLX models.
 
-Provides user-facing tools for discovering available models, getting model
-information, and downloading models from HuggingFace.
+NOTE: Only gpt-oss-20b is supported. Functions remain for backward compatibility
+but will always return gpt-oss-20b information.
 """
 
 import logging
@@ -53,11 +53,11 @@ def list_models(
     Example:
         >>> models = list_models(filter_by_size="small")
         >>> print(models)
-        ['gemma-2-2b', 'llama-3.2-3b', 'phi-3-mini', ...]
+        ['gpt-oss-20b']
 
         >>> models = list_models(filter_by_context=100000, sort_by="memory")
         >>> print(models)
-        ['phi-3-mini-128k']
+        ['gpt-oss-20b']
     """
     all_models = list_available_models()
 
@@ -110,9 +110,9 @@ def get_model_info(model_name: str) -> ModelMetadata | None:
         ModelMetadata dictionary with all model information, or None if not found
 
     Example:
-        >>> info = get_model_info("phi-3-mini")
+        >>> info = get_model_info("gpt-oss-20b")
         >>> print(f"{info['name']}: {info['description']}")
-        "phi-3-mini: Microsoft Phi-3 Mini (3.8B) - Fast and efficient, great for chat"
+        "gpt-oss-20b: OpenAI GPT-OSS 20B - MLX quantized with Harmony format support"
         >>> print(f"Memory: {info['memory_estimate_gb']:.1f}GB")
         "Memory: 2.4GB"
     """
@@ -163,9 +163,9 @@ def download_model(model_name: str, verbose: bool = True) -> tuple[bool, str]:
         - message: Status or error message
 
     Example:
-        >>> success, msg = download_model("phi-3-mini")
+        >>> success, msg = download_model("gpt-oss-20b")
         >>> print(msg)
-        "✓ Model 'phi-3-mini' downloaded successfully from mlx-community/Phi-3-mini-4k-instruct-4bit"
+        "✓ Model 'gpt-oss-20b' downloaded successfully from mlx-community/gpt-oss-20b-MXFP4-Q8"
 
     Note:
         This function does NOT keep the model loaded in memory.
@@ -239,15 +239,13 @@ def compare_models(model_names: list[str]) -> str:
         Formatted comparison table as string
 
     Example:
-        >>> comparison = compare_models(["phi-3-mini", "mistral-7b", "llama-3-8b"])
+        >>> comparison = compare_models(["gpt-oss-20b"])
         >>> print(comparison)
         Model Comparison
         ================
         Model          Size   Context  Description
         -------------- ------ -------- -----------
-        phi-3-mini     2.4GB  4K       Microsoft Phi-3 Mini...
-        mistral-7b     4.4GB  8K       Mistral 7B Instruct...
-        llama-3-8b     4.9GB  8K       Meta Llama 3 8B...
+        gpt-oss-20b    12.0GB 2K       OpenAI GPT-OSS 20B...
     """
     lines = [
         "Model Comparison",
@@ -288,13 +286,13 @@ def find_models_by_description(search_term: str) -> list[str]:
         List of model names with matching descriptions
 
     Example:
-        >>> models = find_models_by_description("multilingual")
+        >>> models = find_models_by_description("harmony")
         >>> print(models)
-        ['qwen-2.5-7b', 'qwen-2.5-3b']
+        ['gpt-oss-20b']
 
         >>> models = find_models_by_description("long context")
         >>> print(models)
-        ['phi-3-mini-128k', 'qwen-2.5-7b', 'qwen-2.5-3b']
+        []  # No long context models available (gpt-oss-20b has 2K context)
     """
     search_lower = search_term.lower()
     matches = []
@@ -326,13 +324,13 @@ def get_model_recommendation(
     Example:
         >>> model, reason = get_model_recommendation("chat", max_memory_gb=3.0)
         >>> print(f"{model}: {reason}")
-        "phi-3-mini: Fits in 3.0GB budget, optimized for chat"
+        "gpt-oss-20b: Only available model - Harmony format optimized"
 
         >>> model, reason = get_model_recommendation(
         ...     "general", max_memory_gb=6.0, min_context_k=32
         ... )
         >>> print(f"{model}: {reason}")
-        "qwen-2.5-3b: 32K context, fits in 6.0GB budget"
+        "gpt-oss-20b: Only available model - Harmony format optimized"
     """
     # Start with use case recommendation
     base_recommendation = get_recommended_model(use_case)
@@ -407,12 +405,12 @@ def format_model_info(model_name: str) -> str:
         Formatted multi-line string with model details
 
     Example:
-        >>> print(format_model_info("phi-3-mini"))
-        Model: phi-3-mini
+        >>> print(format_model_info("gpt-oss-20b"))
+        Model: gpt-oss-20b
         =================
-        Description: Microsoft Phi-3 Mini (3.8B) - Fast and efficient, great for chat
-        Repository:  mlx-community/Phi-3-mini-4k-instruct-4bit
-        Size:        ~2.4GB (small)
+        Description: OpenAI GPT-OSS 20B - MLX quantized with Harmony format support
+        Repository:  mlx-community/gpt-oss-20b-MXFP4-Q8
+        Size:        ~12.0GB (large)
         Context:     4096 tokens (4K)
         Quantization: 4bit
     """
@@ -448,9 +446,9 @@ def check_model_compatibility(model_name: str) -> tuple[bool, str]:
         - message: Compatibility status or issues
 
     Example:
-        >>> is_compatible, msg = check_model_compatibility("phi-3-mini")
+        >>> is_compatible, msg = check_model_compatibility("gpt-oss-20b")
         >>> print(msg)
-        "✓ Model compatible: phi-3-mini requires ~2500MB, 16384MB available"
+        "✓ Model compatible: gpt-oss-20b requires ~12000MB, 16384MB available"
     """
     from ..devices import DeviceDetector
 

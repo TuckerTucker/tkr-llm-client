@@ -72,12 +72,12 @@ async def create_chat_completion(request: ChatCompletionRequest):
         )
 
     # Validate model name
-    if request.model not in ["gpt-oss-20b", "phi-3-mini"]:
+    if request.model not in ["gpt-oss-20b"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=ErrorResponse(
                 error=ErrorDetail(
-                    message=f"Model '{request.model}' not supported. Use 'gpt-oss-20b' or 'phi-3-mini'",
+                    message=f"Model '{request.model}' not supported. Use 'gpt-oss-20b'",
                     type="invalid_request_error",
                     code="invalid_model",
                 )

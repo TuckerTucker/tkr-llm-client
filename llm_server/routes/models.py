@@ -12,7 +12,7 @@ from llm_server.schemas import ModelInfo, ModelsResponse
 router = APIRouter()
 
 # Supported models
-SUPPORTED_MODELS = ["gpt-oss-20b", "phi-3-mini"]
+SUPPORTED_MODELS = ["gpt-oss-20b"]
 
 
 @router.get("/v1/models", response_model=ModelsResponse)

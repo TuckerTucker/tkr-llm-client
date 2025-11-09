@@ -28,7 +28,7 @@ def adapter_config():
     """Create test configuration for adapter"""
     return ModelConfig(
         model_path="/path/to/test/model",
-        model_name="phi-3-mini",
+        model_name="gpt-oss-20b",
         device=DeviceType.CPU,
         quantization="int4",
     )
@@ -54,7 +54,7 @@ class TestAdapterInitialization:
         adapter = GPTOSSAdapter(adapter_config)
 
         assert adapter.config == adapter_config
-        assert adapter.config.model_name == "phi-3-mini"
+        assert adapter.config.model_name == "gpt-oss-20b"
         assert adapter.config.device == DeviceType.CPU
         assert adapter.config.quantization == "int4"
 
@@ -69,7 +69,7 @@ class TestAdapterInitialization:
         # Valid configurations should not raise errors
         valid_config = ModelConfig(
             model_path="/valid/path",
-            model_name="phi-3-mini",
+            model_name="gpt-oss-20b",
             device=DeviceType.AUTO,
             quantization="int4",
         )

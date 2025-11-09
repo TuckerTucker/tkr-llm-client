@@ -64,7 +64,7 @@ class ModelLoader:
         self._is_loaded = False
 
         # Extract config values
-        self.model_name = getattr(config, "model_name", "phi-3-mini")
+        self.model_name = getattr(config, "model_name", "gpt-oss-20b")
         self.quantization = getattr(config, "quantization", "4bit")
         self.device = getattr(config, "device", "auto")
         self.max_model_len = getattr(config, "max_model_len", 4096)
@@ -368,7 +368,7 @@ class ModelLoader:
 
         # Update config
         self.config = new_config
-        self.model_name = getattr(new_config, "model_name", "phi-3-mini")
+        self.model_name = getattr(new_config, "model_name", "gpt-oss-20b")
         self.quantization = getattr(new_config, "quantization", "4bit")
         self.device = getattr(new_config, "device", "auto")
         self.max_model_len = getattr(new_config, "max_model_len", 4096)

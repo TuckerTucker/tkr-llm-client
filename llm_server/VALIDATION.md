@@ -44,7 +44,7 @@
 #### Models Route (`routes/models.py`)
 - [x] `GET /v1/models` endpoint
 - [x] Returns `ModelsResponse` schema
-- [x] Lists supported models (gpt-oss-20b, phi-3-mini)
+- [x] Lists supported models (gpt-oss-20b only)
 - [x] OpenAI-compatible format
 
 #### Chat Route (`routes/chat.py`)
@@ -129,7 +129,7 @@ curl http://localhost:42002/v1/models
 curl http://localhost:42002/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "phi-3-mini",
+    "model": "gpt-oss-20b",
     "messages": [{"role": "user", "content": "Hello"}],
     "max_tokens": 10
   }'
@@ -138,7 +138,7 @@ curl http://localhost:42002/v1/chat/completions \
 curl http://localhost:42002/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "phi-3-mini",
+    "model": "gpt-oss-20b",
     "messages": [{"role": "user", "content": "Count to 5"}],
     "stream": true
   }'
