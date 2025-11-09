@@ -16,7 +16,11 @@
     "build": "tsc",
     "clean": "rm -rf dist",
     "rebuild": "npm run clean && npm run build",
-    "test": "echo \"Tests not yet implemented\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:live": "vitest run tests/live",
     "prepublishOnly": "npm run rebuild"
   },
   "keywords": [
@@ -45,7 +49,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "typescript": "^5.3.0"
+    "@vitest/ui": "^4.0.8",
+    "typescript": "^5.3.0",
+    "vitest": "^4.0.8"
   },
   "files": [
     "dist",

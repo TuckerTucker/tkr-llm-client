@@ -48,3 +48,8 @@ Thumbs.db
 # Testing
 coverage/
 .nyc_output/
+
+# tkr dev
+.claude
+.context-kit
+claude.local.md

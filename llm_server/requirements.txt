@@ -6,6 +6,7 @@ pydantic-settings>=2.1.0
 
 # ASGI server
 python-multipart>=0.0.6
+psutil>=5.9.0
 
 # For streaming responses
 sse-starlette>=1.8.2

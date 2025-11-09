@@ -31,15 +31,8 @@ from openai_harmony import (
     TextContent,
 )
 
-# Add the contract path to allow imports
-contract_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-    '.context-kit', 'orchestration', 'harmony-replacement', 'integration-contracts'
-)
-if os.path.exists(contract_path):
-    sys.path.insert(0, contract_path)
-
-from harmony_builder_interface import (
+# Import from llm_server directly (files are in parent directory)
+from llm_server.harmony_builder_interface import (
     HarmonyPrompt,
     ReasoningLevel,
     HarmonyPromptBuilderInterface,
@@ -526,8 +519,8 @@ import time
 # Import from openai-harmony for parsing (reuse imports from above)
 from openai_harmony import StreamableParser
 
-# Import from integration contracts
-from harmony_parser_interface import (
+# Import from llm_server directly (files are in parent directory)
+from llm_server.harmony_parser_interface import (
     ParsedHarmonyResponse as ParsedHarmonyResponseInterface,
     HarmonyResponseParserInterface,
 )
