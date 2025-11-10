@@ -1,0 +1,15 @@
+metadata:
+  name: grandchild-template
+  version: 1.0.0
+  description: Grandchild template for deep inheritance testing
+  extends: ./child-template.yaml
+
+agent:
+  description: Grandchild with even more tools
+  prompt: |
+    # More specific instructions
+    Also check for performance issues.
+  tools:
+    - Edit
+  settings:
+    temperature: 0.5

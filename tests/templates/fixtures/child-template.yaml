@@ -1,0 +1,15 @@
+metadata:
+  name: child-template
+  version: 1.0.0
+  description: Child template extending base
+  extends: ./base-template.yaml
+
+agent:
+  description: Child agent with additional tools
+  prompt: |
+    # Additional instructions
+    Focus on code quality and security.
+  tools:
+    - Write
+  settings:
+    maxTurns: 5

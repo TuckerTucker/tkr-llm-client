@@ -1,0 +1,16 @@
+# Multi-document YAML with multiple tool configs
+---
+tool:
+  name: Read
+  permissions:
+    allowedPaths: ["**/*.ts"]
+---
+tool:
+  name: Write
+  permissions:
+    requireConfirmation: true
+---
+tool:
+  name: Edit
+  permissions:
+    allowedPaths: ["src/**"]

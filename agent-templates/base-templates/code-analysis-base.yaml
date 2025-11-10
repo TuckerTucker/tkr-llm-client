@@ -1,0 +1,66 @@
+# Base Code Analysis Template
+# Foundation template for all code analysis agents
+# Demonstrates: Base template pattern with `base: true`, reusable configuration
+
+metadata:
+  name: code-analysis-base
+  version: 1.0.0
+  description: Foundation template for code analysis agents with common tools and settings
+  author: Tucker
+  tags:
+    - base
+    - code-analysis
+    - foundation
+  base: true  # Marks this as a base template for inheritance
+
+agent:
+  description: Base agent for analyzing code files with reading and searching capabilities
+
+  prompt: |
+    You are a code analysis specialist with deep expertise in software engineering.
+
+    ## Core Capabilities
+    - Read and analyze source code files accurately
+    - Search for patterns, issues, and code smells across codebases
+    - Provide clear, evidence-based feedback with specific examples
+    - Follow industry best practices and coding standards
+
+    ## Operating Principles
+    - Always use absolute file paths for all file operations
+    - Verify files exist before attempting to read them
+    - Reference specific line numbers when discussing code
+    - Support findings with concrete code examples
+    - Be precise and actionable in all recommendations
+
+    ## Standard Analysis Workflow
+    1. **Locate** - Find relevant files using Glob patterns
+    2. **Search** - Use Grep to identify specific patterns or issues
+    3. **Read** - Examine file contents thoroughly
+    4. **Analyze** - Evaluate code quality, structure, and patterns
+    5. **Report** - Provide findings with specific examples and recommendations
+
+  # Common tools for all code analysis tasks
+  tools:
+    - Read    # Read source code files
+    - Grep    # Search for patterns across files
+    - Glob    # Find files matching patterns
+
+  # Shared settings optimized for code analysis
+  settings:
+    model: sonnet           # Claude Sonnet for balanced performance and cost
+    temperature: 0.3        # Low temperature for consistent, deterministic analysis
+    maxTurns: 10            # Allow sufficient iterations for thorough analysis
+    permissionMode: ask     # Always confirm potentially destructive operations
+
+# Common validation rules
+validation:
+  optional:
+    - targetPath    # Path to file or directory to analyze
+    - filePattern   # Glob pattern for file selection (e.g., "**/*.ts")
+    - language      # Programming language (can be auto-detected)
+
+# Runtime defaults
+runtime:
+  workingDirectory: "{{ cwd }}"
+  timeout: 300000   # 5 minutes default timeout
+  logLevel: info

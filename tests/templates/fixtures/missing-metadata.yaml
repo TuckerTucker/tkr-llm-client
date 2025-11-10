@@ -1,0 +1,6 @@
+# Template missing metadata section
+agent:
+  description: Agent without metadata
+  prompt: This template is missing the metadata section
+  tools:
+    - Read

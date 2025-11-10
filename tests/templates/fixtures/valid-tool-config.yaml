@@ -1,0 +1,16 @@
+# Valid tool configuration for testing
+tool:
+  name: Write
+  permissions:
+    requireConfirmation: true
+    allowedPaths:
+      - "src/**"
+      - "tests/**"
+    deniedPaths:
+      - "**/.env"
+  validation:
+    maxFileSize: 1048576
+    checkDiskSpace: true
+  errorHandling:
+    retryAttempts: 3
+    fallbackBehavior: throw

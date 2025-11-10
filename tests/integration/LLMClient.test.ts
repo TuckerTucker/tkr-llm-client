@@ -10,7 +10,7 @@ import { LLMClientConfig } from '../../src/client/types';
 
 // Mock the Claude Code SDK
 const mockQuery = vi.fn();
-vi.mock('@anthropic-ai/claude-code', () => ({
+vi.mock('@anthropic-ai/claude-agent-sdk', () => ({
   query: (params: any) => mockQuery(params),
 }));
 

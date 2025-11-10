@@ -14,7 +14,7 @@ import { extractThinkingBlocks } from '../../src/utils/thinking';
 
 // Mock the Claude Code SDK
 const mockQuery = vi.fn();
-vi.mock('@anthropic-ai/claude-code', () => ({
+vi.mock('@anthropic-ai/claude-agent-sdk', () => ({
   query: (params: any) => mockQuery(params),
 }));
 

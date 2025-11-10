@@ -1,0 +1,12 @@
+# Valid prompt fragment for testing
+fragment:
+  name: test-fragment
+  instructions: |
+    Test instructions for fragment loading.
+    This is a multi-line instruction set.
+  example: |
+    Example usage here
+  validation: |
+    Validation rules here
+  safetyChecks: |
+    Safety checks here

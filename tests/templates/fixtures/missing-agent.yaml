@@ -1,0 +1,5 @@
+# Template missing agent section
+metadata:
+  name: incomplete-template
+  version: 1.0.0
+  description: This template is missing the agent section

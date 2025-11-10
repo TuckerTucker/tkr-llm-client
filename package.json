@@ -16,12 +16,13 @@
     "build": "tsc",
     "clean": "rm -rf dist",
     "rebuild": "npm run clean && npm run build",
+    "verify-exports": "npx tsx scripts/verify-exports.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:live": "vitest run tests/live",
-    "prepublishOnly": "npm run rebuild"
+    "prepublishOnly": "npm run rebuild && npm run verify-exports"
   },
   "keywords": [
     "llm",
@@ -35,7 +36,7 @@
     "anthropic"
   ],
   "author": "Tucker",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.1.36",
     "js-yaml": "^4.1.0"
@@ -51,6 +52,7 @@
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^4.0.8",
     "@vitest/ui": "^4.0.8",
     "typescript": "^5.3.0",
     "vitest": "^4.0.8"

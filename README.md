@@ -211,6 +211,138 @@ The package includes a FastAPI server for local LLM inference using MLX (Apple S
 - Health checks (`/health`)
 - Model management
 
+## Agent Template System
+
+Create reusable, composable AI agents with YAML templates.
+
+### Features
+
+- **Inheritance**: Extend base templates for specialized agents
+- **Mixins**: Compose prompt fragments modularly
+- **Variable Interpolation**: Dynamic prompts with `{{ variable }}` syntax
+- **Tool Configuration**: Fine-grained control over tool permissions
+- **Validation**: Schema validation for templates and inputs
+- **Type Safety**: Full TypeScript support
+
+### Quick Example
+
+Create a template:
+
+```yaml
+# agent-templates/code-reviewer.yaml
+metadata:
+  name: code-reviewer
+  version: 1.0.0
+  description: Reviews code for quality issues
+
+agent:
+  description: Code review specialist
+  prompt: |
+    Review {{ targetFile }} for {{ concern }} issues.
+    Save findings to {{ outputPath | default: ./review.md }}.
+
+  tools:
+    - Read
+    - Write
+    - Grep
+
+  settings:
+    model: sonnet
+    temperature: 0.3
+
+validation:
+  required:
+    - targetFile
+    - concern
+  types:
+    concern:
+      type: enum
+      enum: [security, performance, style]
+```
+
+Use the template:
+
+```typescript
+import { AgentFactory } from '@tkr/llm-client/templates';
+
+// Initialize factory
+const factory = new AgentFactory({
+  templateDir: './agent-templates'
+});
+await factory.scan();
+
+// Create agent configuration
+const config = await factory.create('code-reviewer', {
+  targetFile: './src/index.ts',
+  concern: 'security'
+});
+
+// Use with LLMClient
+const client = new LLMClient({ claudeSDK: sdk });
+for await (const msg of client.query(config.prompt, {
+  allowedTools: config.tools,
+  maxTurns: config.settings.maxTurns,
+  temperature: config.settings.temperature
+})) {
+  console.log(msg.content);
+}
+```
+
+### Template Features
+
+**Inheritance**:
+```yaml
+metadata:
+  extends: ./base-template.yaml  # Inherit from parent
+
+agent:
+  prompt: |
+    Additional instructions...    # Appended to parent prompt
+  tools:
+    - Edit                        # Added to parent tools
+```
+
+**Variables**:
+```yaml
+agent:
+  prompt: |
+    File: {{ targetFile }}
+    Output: {{ outputPath | default: ./output.md }}
+    {{ if verbose }}Detailed mode{{ endif }}
+```
+
+**Tool Safety**:
+```yaml
+agent:
+  tools:
+    - name: Write
+      overrides:
+        permissions:
+          allowedPaths: [src/**/*.ts]
+          deniedPaths: [node_modules/**]
+```
+
+### Documentation
+
+- [Template System Guide](./docs/templates.md) - Complete guide with examples
+- [YAML Schema Reference](./docs/template-schema.md) - Full schema documentation
+
+### Template Registry
+
+Browse and filter available templates:
+
+```typescript
+// Get catalog
+const catalog = factory.getRegistry().getCatalog();
+console.log(`Found ${catalog.count} templates`);
+
+// Filter by tag
+const codeAgents = factory.getRegistry().filterByTag('code-analysis');
+
+// Filter by tool
+const writeAgents = factory.getRegistry().filterByTool('Write');
+```
+
 ## License
 
-MIT
+Apache 2.0

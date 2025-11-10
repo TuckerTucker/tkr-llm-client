@@ -1,0 +1,13 @@
+metadata:
+  name: tool-with-config
+  version: 1.0.0
+  description: Template with tool config
+
+agent:
+  description: Agent with tool configuration
+  prompt: Test prompt
+  toolConfigs:
+    - ./valid-tool-config.yaml
+  tools:
+    - Read
+    - Write

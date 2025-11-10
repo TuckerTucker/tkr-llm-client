@@ -1,0 +1,21 @@
+metadata:
+  name: log-analyzer-agent
+  version: 1.0.0
+  description: Analyzes log files
+
+agent:
+  description: Log analyzer
+  prompt: |
+    Analyze logs at {{ logPath }} and write report to {{ reportPath | default: ./report.md }}.
+  tools:
+    - Read
+    - Write
+    - Grep
+
+validation:
+  required:
+    - logPath
+
+runtime:
+  workingDirectory: "{{ cwd }}"
+  timeout: 30000

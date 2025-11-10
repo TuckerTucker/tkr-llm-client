@@ -1,0 +1,4 @@
+# Fragment missing required fields
+fragment:
+  name: incomplete-fragment
+  # Missing instructions field

@@ -68,3 +68,6 @@ export {
   ServerUnavailableError,
   ConfigurationError
 } from './errors';
+
+// Template system exports
+export * from './templates';

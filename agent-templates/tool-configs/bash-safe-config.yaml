@@ -1,0 +1,135 @@
+# Safe Bash Tool Configuration
+# Conservative Bash configuration allowing common development commands
+# Demonstrates: Tool configuration with whitelist/blacklist approach
+
+tool:
+  name: Bash
+
+  permissions:
+    # Whitelist of allowed commands (safe development operations)
+    allowedCommands:
+      # Version control (Git)
+      - git status
+      - git diff
+      - git diff --staged
+      - git log
+      - git log --oneline
+      - git branch
+      - git branch -a
+      - git show
+      - git add *
+      - git commit -m *
+      - git push
+      - git pull
+      - git fetch
+
+      # Package managers (npm/yarn)
+      - npm install
+      - npm install *
+      - npm test
+      - npm run *
+      - npm run build
+      - npm run lint
+      - npm run type-check
+      - npm ci
+      - npm list
+      - yarn install
+      - yarn test
+      - yarn build
+
+      # File system (safe read-only operations)
+      - ls
+      - ls -la
+      - ls -l
+      - pwd
+      - cat *
+      - grep *
+      - find *
+      - mkdir *
+
+      # Process management
+      - ps
+      - ps aux
+      - kill
+
+      # Version checking
+      - node --version
+      - npm --version
+      - python --version
+      - git --version
+
+    # Blacklist of dangerous patterns (regex)
+    deniedPatterns:
+      # Destructive file operations
+      - rm -rf /
+      - rm -rf /*
+      - rm -rf \.
+      - rm -rf \.\./
+      - mkfs
+      - dd if=
+      - :\(\)\{ :\|:\& \}\;:  # Fork bomb pattern
+
+      # Privilege escalation
+      - sudo .*
+      - su .*
+      - doas .*
+
+      # Permission modifications
+      - chmod 777
+      - chmod -R 777
+      - chown .*
+
+      # Network operations (potential security risk)
+      - curl .* \| bash
+      - curl .* \| sh
+      - wget .* \| bash
+      - wget .* \| sh
+      - nc .*
+      - netcat .*
+
+      # Code execution
+      - eval .*
+      - exec .*
+
+      # File redirection (use Write tool instead)
+      - .* > .*
+      - .* >> .*
+
+      # Package publishing
+      - npm publish
+      - npm unpublish
+      - yarn publish
+
+    # Commands requiring user confirmation
+    requireConfirmation:
+      - git push                    # Push to remote
+      - git push --force            # Force push (dangerous)
+      - git push -f                 # Force push shorthand
+      - git reset --hard            # Destructive reset
+      - git commit --amend          # Modify history
+      - npm install *               # Installing packages
+      - rm -rf *                    # Recursive delete
+      - git merge                   # Merge operations
+      - git rebase                  # Rebase operations
+
+    # Rate limiting to prevent abuse
+    rateLimits:
+      requestsPerMinute: 15
+      requestsPerHour: 100
+
+  # Validation settings
+  validation:
+    verifyCommandExists: true       # Check command is available
+    checkWorkingDirectory: true     # Verify working directory exists
+
+  # Default settings
+  defaultSettings:
+    timeout: 120000                 # 2 minutes default timeout
+    workingDirectory: "{{ cwd }}"   # Use current working directory
+
+  # Error handling
+  errorHandling:
+    retryAttempts: 0                # Don't auto-retry Bash commands
+    retryDelayMs: 0
+    fallbackBehavior: throw         # Surface all errors
+    onError: throw                  # Don't suppress errors

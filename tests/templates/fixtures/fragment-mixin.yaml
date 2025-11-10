@@ -1,0 +1,13 @@
+metadata:
+  name: fragment-mixin
+  version: 1.0.0
+  description: Template with fragment mixins
+  mixins:
+    - ./valid-fragment.yaml
+
+agent:
+  description: Agent with fragment mixin
+  prompt: |
+    Main template prompt.
+  tools:
+    - Read

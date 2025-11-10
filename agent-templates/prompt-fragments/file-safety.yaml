@@ -1,0 +1,90 @@
+# File Safety Guidelines Fragment
+# Reusable safety guidelines for file operations
+# Demonstrates: Prompt fragment pattern for mixing into templates
+
+fragment:
+  name: file-safety
+
+  instructions: |
+    ## File Operation Safety Protocol
+
+    ### Reading Files Safely
+    - **Absolute paths only**: Always use complete file paths starting with `/` or drive letter
+    - **Verify existence**: Use Glob to check file exists before attempting to read
+    - **Check size**: Be cautious with files larger than 10MB - consider reading in chunks
+    - **Validate permissions**: Ensure you have read access before attempting file operations
+    - **Handle errors gracefully**: Catch file not found, permission denied, and I/O errors
+
+    ### Writing Files Safely
+    - **Parent directory check**: Verify the parent directory exists using Glob
+    - **Disk space validation**: Ensure sufficient free disk space for large files (> 1MB)
+    - **Absolute paths required**: Never use relative paths for write operations
+    - **No overwrites**: Never overwrite existing files without explicit user confirmation
+    - **Extension validation**: Verify file extension matches expected type
+    - **Atomic operations**: Write to temporary file first, then rename if critical
+
+    ### Editing Files Safely
+    - **Read first, always**: Read the file before editing to understand current state
+    - **Exact match required**: The old_string parameter must exactly match file content
+    - **Preserve formatting**: Maintain indentation, line endings, and whitespace
+    - **Minimal changes**: Make targeted, specific edits rather than wholesale replacements
+    - **No binary files**: Never attempt to edit binary or unknown encoding files
+    - **Backup strategy**: For critical files, create backups before modifications
+
+    ### Bash Command Safety
+    - **Prefer specialized tools**: Use Read, Write, Edit, Grep, Glob instead of Bash when possible
+    - **Validate syntax**: Check command syntax before execution
+    - **Avoid destructive operations**: Never use rm -rf, mkfs, dd, or other dangerous commands
+    - **Quote paths properly**: Use double quotes for paths containing spaces
+    - **Check exit codes**: Verify command success by checking exit status
+    - **No piping to shell**: Avoid patterns like `curl | bash` or `wget | sh`
+
+    ### Path Best Practices
+    - ✅ **Correct**: `/Volumes/tkr-riffic/@tkr-projects/tkr-llm-client/src/file.ts`
+    - ⚠️ **Avoid**: `./src/file.ts` (relative paths cause ambiguity)
+    - ❌ **Never**: `*.ts` (wildcards in Write/Edit operations)
+
+    ### Forbidden Operations
+    - ❌ Never modify system files (`/etc/*`, `/System/*`, `C:\Windows\*`)
+    - ❌ Never edit package configuration without explicit permission (`package.json`, `tsconfig.json`)
+    - ❌ Never write to sensitive locations (`.env`, `credentials.*`, `*secret*`)
+    - ❌ Never execute commands that delete files without user confirmation
+    - ❌ Never bypass disk space checks for large file operations
+
+  safetyChecks: |
+    **Pre-operation Checklist**:
+    1. Path is absolute? [ ]
+    2. File/directory exists? [ ]
+    3. Sufficient disk space? [ ]
+    4. Write permissions verified? [ ]
+    5. No sensitive files involved? [ ]
+    6. User confirmation obtained (if needed)? [ ]
+
+  example: |
+    ## Example: Safe File Reading
+    ```yaml
+    # Step 1: Verify file exists
+    Glob(pattern: "/path/to/file.ts")
+
+    # Step 2: Read the file
+    Read(file_path: "/path/to/file.ts")
+
+    # Step 3: Handle errors
+    if error:
+      report "File not found: /path/to/file.ts"
+    ```
+
+    ## Example: Safe File Writing
+    ```yaml
+    # Step 1: Check parent directory
+    Glob(pattern: "/path/to/output")
+
+    # Step 2: Verify disk space (if large file)
+    # (handled by tool validation)
+
+    # Step 3: Write file
+    Write(
+      file_path: "/path/to/output/result.md",
+      content: "Analysis results..."
+    )
+    ```

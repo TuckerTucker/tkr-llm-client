@@ -1,0 +1,10 @@
+# Invalid YAML syntax
+metadata:
+  name: broken-template
+  version: 1.0.0
+  description: This YAML has syntax errors
+  invalid: [unclosed array
+agent:
+  description: {unclosed object
+  prompt: Missing closing quote for this string"
+  tools:
