@@ -1,0 +1,18 @@
+metadata:
+  name: test-agent-2
+  description: Second test agent for relationship testing
+  version: 1.0.0
+  tags:
+    - test
+    - relationships
+  author: Agent 6
+  extends: test-agent
+
+agent:
+  description: Second test agent for relationship testing
+  prompt: |
+    This is a second test agent that extends test-agent.
+    Used to test template inheritance relationships.
+  tools:
+    - Read
+    - Grep

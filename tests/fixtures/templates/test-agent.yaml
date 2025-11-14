@@ -1,0 +1,18 @@
+metadata:
+  name: test-agent
+  description: Test agent for integration testing
+  version: 1.0.0
+  tags:
+    - test
+    - integration
+  author: Agent 6
+
+agent:
+  description: Test agent for integration testing
+  prompt: |
+    This is a test agent template used for integration testing.
+    It validates that templates can be loaded, converted to nodes, and rendered on the canvas.
+  tools:
+    - Read
+    - Write
+    - Bash
