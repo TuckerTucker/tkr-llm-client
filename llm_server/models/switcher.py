@@ -216,22 +216,6 @@ def get_switch_recommendation(
     # Only gpt-oss-20b is supported now
     return ("gpt-oss-20b", "Only supported model - Harmony format optimized")
 
-        alt_spec = get_model_spec(alternative)
-
-        if alt_spec:
-            return (
-                alternative,
-                f"Optimized for {target_use_case} with similar memory footprint "
-                f"(~{alt_spec['memory_estimate_mb']}MB vs current {current_memory_mb}MB)",
-            )
-
-    # Return recommended model
-    reason = f"Best for {target_use_case}"
-    if spec.get("description"):
-        reason = spec["description"]
-
-    return (recommended, reason)
-
 
 def cleanup_before_switch() -> None:
     """

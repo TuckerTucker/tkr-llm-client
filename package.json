@@ -22,6 +22,11 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:live": "vitest run tests/live",
+    "server": "./start-llm-server.sh",
+    "server:dev": "cd llm_server && uvicorn llm_server.server:app --reload --log-level debug",
+    "example:quick": "npx tsx examples/quick-test.ts",
+    "example:local": "npx tsx examples/local-inference.ts",
+    "example:managed": "npx tsx examples/managed-server.ts",
     "prepublishOnly": "npm run rebuild && npm run verify-exports"
   },
   "keywords": [
