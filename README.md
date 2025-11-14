@@ -1,18 +1,28 @@
 # @tkr/llm-client
 
-Generic LLM client library with Claude SDK and local LLM server support.
+Lightweight LLM inference library with Claude Agent SDK and local LLM server support.
+
+> **Note**: This is the core inference library. For advanced features like agent templates and ReactFlow UI visualization, see the [Branch Architecture](#branch-architecture) section below.
 
 ## Features
 
 - **Claude Agent SDK Integration**: Full access to Claude's tool ecosystem with agent capabilities
-- **Local LLM Server**: Run MLX models on Apple Silicon
+- **Local LLM Server**: Run MLX models on Apple Silicon with automated startup scripts
 - **Unified Interface**: Single API for both Claude Agent SDK and local LLM
 - **Framework-Agnostic**: Use in any TypeScript/Node.js project
 - **Event-Driven**: Subscribe to thinking blocks, messages, and errors
 - **Retry Logic**: Built-in exponential backoff for resilience
 - **TypeScript**: Full type safety with comprehensive TypeScript support
-- **Budget Control**: Set maximum spending limits with `maxBudgetUsd`
-- **Session Management**: Resume and fork conversations with persistent sessions
+
+## Branch Architecture
+
+This project uses a multi-branch architecture to keep the main library lightweight:
+
+- **`main`** (this branch): Core inference library - lightweight, focused on LLM queries
+- **`feature/agent-templates`**: Agent template system with YAML-based configuration, inheritance, and mixins
+- **`feature/reactflow-ui`**: ReactFlow visualization UI for agent workflows and execution graphs
+
+Each branch is independently maintained and can be merged as needed for specific use cases.
 
 ## Installation
 
@@ -22,12 +32,21 @@ npm install @tkr/llm-client
 
 ## Quick Start
 
-### Basic Usage
+### Starting the Local LLM Server
 
+**Option 1: Using the startup script (recommended)**
+```bash
+# Automated startup with venv management and hot reload
+npm run server
+
+# Or directly:
+./start-llm-server.sh
+```
+
+**Option 2: Programmatic management**
 ```typescript
-import { LLMClient, LLMServerManager } from '@tkr/llm-client';
+import { LLMServerManager } from '@tkr/llm-client';
 
-// Start local LLM server
 const serverManager = new LLMServerManager({
   port: 42002,
   pythonPath: './venv/bin/python',
@@ -35,8 +54,14 @@ const serverManager = new LLMServerManager({
 });
 
 await serverManager.start();
+```
 
-// Create client
+### Basic Usage
+
+```typescript
+import { LLMClient } from '@tkr/llm-client';
+
+// Create client (server should be running on port 42002)
 const client = new LLMClient({
   localServer: {
     enabled: true,
@@ -157,7 +182,6 @@ Main client interface combining Claude SDK and local LLM.
 
 - `query(prompt, options)`: Stream messages from LLM with tool access
 - `queryDirect(prompt, options)`: Direct HTTP query, no tools (faster)
-- `executeSubagent(name, task)`: Execute task using subagent
 - `setContext(context)`: Set context for thinking attribution
 - `isLocalServerHealthy()`: Check local server health
 - `shutdown()`: Clean up resources
@@ -211,137 +235,57 @@ The package includes a FastAPI server for local LLM inference using MLX (Apple S
 - Health checks (`/health`)
 - Model management
 
-## Agent Template System
+### Server Startup
 
-Create reusable, composable AI agents with YAML templates.
+```bash
+# Automated startup with venv, dependencies, and hot reload
+npm run server
 
-### Features
-
-- **Inheritance**: Extend base templates for specialized agents
-- **Mixins**: Compose prompt fragments modularly
-- **Variable Interpolation**: Dynamic prompts with `{{ variable }}` syntax
-- **Tool Configuration**: Fine-grained control over tool permissions
-- **Validation**: Schema validation for templates and inputs
-- **Type Safety**: Full TypeScript support
-
-### Quick Example
-
-Create a template:
-
-```yaml
-# agent-templates/code-reviewer.yaml
-metadata:
-  name: code-reviewer
-  version: 1.0.0
-  description: Reviews code for quality issues
-
-agent:
-  description: Code review specialist
-  prompt: |
-    Review {{ targetFile }} for {{ concern }} issues.
-    Save findings to {{ outputPath | default: ./review.md }}.
-
-  tools:
-    - Read
-    - Write
-    - Grep
-
-  settings:
-    model: sonnet
-    temperature: 0.3
-
-validation:
-  required:
-    - targetFile
-    - concern
-  types:
-    concern:
-      type: enum
-      enum: [security, performance, style]
+# Or use the shell script directly:
+./start-llm-server.sh
 ```
 
-Use the template:
+The startup script handles:
+- Virtual environment creation and activation
+- Dependency installation
+- `.env` file loading with proper comment handling
+- Health check URL display
+- Uvicorn hot reload for development
 
-```typescript
-import { AgentFactory } from '@tkr/llm-client/templates';
+See [INFERENCE.md](./INFERENCE.md) for detailed server usage and API examples.
 
-// Initialize factory
-const factory = new AgentFactory({
-  templateDir: './agent-templates'
-});
-await factory.scan();
+## Advanced Features
 
-// Create agent configuration
-const config = await factory.create('code-reviewer', {
-  targetFile: './src/index.ts',
-  concern: 'security'
-});
+This main branch focuses on core inference capabilities. For advanced features:
 
-// Use with LLMClient
-const client = new LLMClient({ claudeSDK: sdk });
-for await (const msg of client.query(config.prompt, {
-  allowedTools: config.tools,
-  maxTurns: config.settings.maxTurns,
-  temperature: config.settings.temperature
-})) {
-  console.log(msg.content);
-}
+### Agent Template System
+The agent template system (YAML-based configuration, inheritance, mixins) is available on the `feature/agent-templates` branch.
+
+```bash
+# Switch to agent templates branch
+git checkout feature/agent-templates
 ```
 
-### Template Features
+Features include:
+- YAML-based agent definitions
+- Template inheritance and composition
+- Variable interpolation
+- Tool permission configuration
+- Full TypeScript support
 
-**Inheritance**:
-```yaml
-metadata:
-  extends: ./base-template.yaml  # Inherit from parent
+### ReactFlow UI
+The ReactFlow visualization UI (agent workflow graphs, execution visualization) is available on the `feature/reactflow-ui` branch.
 
-agent:
-  prompt: |
-    Additional instructions...    # Appended to parent prompt
-  tools:
-    - Edit                        # Added to parent tools
+```bash
+# Switch to UI branch
+git checkout feature/reactflow-ui
 ```
 
-**Variables**:
-```yaml
-agent:
-  prompt: |
-    File: {{ targetFile }}
-    Output: {{ outputPath | default: ./output.md }}
-    {{ if verbose }}Detailed mode{{ endif }}
-```
-
-**Tool Safety**:
-```yaml
-agent:
-  tools:
-    - name: Write
-      overrides:
-        permissions:
-          allowedPaths: [src/**/*.ts]
-          deniedPaths: [node_modules/**]
-```
-
-### Documentation
-
-- [Template System Guide](./docs/templates.md) - Complete guide with examples
-- [YAML Schema Reference](./docs/template-schema.md) - Full schema documentation
-
-### Template Registry
-
-Browse and filter available templates:
-
-```typescript
-// Get catalog
-const catalog = factory.getRegistry().getCatalog();
-console.log(`Found ${catalog.count} templates`);
-
-// Filter by tag
-const codeAgents = factory.getRegistry().filterByTag('code-analysis');
-
-// Filter by tool
-const writeAgents = factory.getRegistry().filterByTool('Write');
-```
+Features include:
+- Interactive workflow visualization
+- Real-time execution tracking
+- Zustand state management
+- Automatic layout with dagre/elk
 
 ## License
 
