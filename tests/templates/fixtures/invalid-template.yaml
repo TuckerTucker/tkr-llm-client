@@ -1,7 +1,0 @@
-# This is intentionally invalid - missing required fields
-metadata:
-  name: invalid-template
-# Missing version and description
-agent:
-  prompt: "Some prompt"
-# Missing tools array

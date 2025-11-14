@@ -5,7 +5,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { LLMMessage, LLMQueryOptions, SubagentResult } from './types';
+import { LLMMessage, LLMQueryOptions } from './types';
 
 /**
  * Main LLM client interface
@@ -31,15 +31,6 @@ export interface ILLMClient extends EventEmitter {
    * @returns Promise resolving to the LLM's text response
    */
   queryDirect(prompt: string, options?: Partial<LLMQueryOptions>): Promise<string>;
-
-  /**
-   * Execute a task using a subagent
-   *
-   * @param name - Name of the subagent
-   * @param task - Task description
-   * @returns Promise resolving to the subagent result
-   */
-  executeSubagent(name: string, task: string): Promise<SubagentResult>;
 
   /**
    * Set the current context for thinking attribution

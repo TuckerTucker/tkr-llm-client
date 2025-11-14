@@ -153,8 +153,9 @@ describe('E2E: Full Workflows', () => {
       expect(messages).toHaveLength(1);
       expect(mockQuery).toHaveBeenCalledWith(
         expect.objectContaining({
+          prompt: 'Custom query',
           options: expect.objectContaining({
-            customSystemPrompt: 'You are a specialized assistant.',
+            systemPrompt: 'You are a specialized assistant.',
             temperature: 0.5,
             allowedTools: ['Read', 'Write'],
           }),
@@ -236,48 +237,6 @@ describe('E2E: Full Workflows', () => {
 
       const requestBody = JSON.parse(mockFetch.mock.calls[1][1].body);
       expect(requestBody.temperature).toBe(0.3);
-
-      client.shutdown();
-    });
-  });
-
-  describe('Subagent Execution Workflow', () => {
-    it('should execute subagent task successfully', async () => {
-      const client = new LLMClient(config);
-
-      async function* mockMessages() {
-        yield { type: 'text', text: 'Working on task...' };
-        yield {
-          type: 'result',
-          result: 'Task completed successfully',
-          subtype: 'success'
-        };
-      }
-
-      mockQuery.mockReturnValue(mockMessages());
-
-      const result = await client.executeSubagent('test-agent', 'Analyze data');
-
-      expect(result.success).toBe(true);
-      expect(result.output).toBe('Task completed successfully');
-      expect(result.metadata).toHaveLength(2);
-
-      client.shutdown();
-    });
-
-    it('should handle subagent failure', async () => {
-      const client = new LLMClient(config);
-
-      async function* mockMessages() {
-        yield { type: 'error', error: 'Task failed' };
-      }
-
-      mockQuery.mockReturnValue(mockMessages());
-
-      const result = await client.executeSubagent('test-agent', 'Bad task');
-
-      expect(result.success).toBe(false);
-      expect(result.output).toBe('');
 
       client.shutdown();
     });

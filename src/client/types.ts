@@ -168,26 +168,6 @@ export interface LLMMessage {
 }
 
 /**
- * Subagent execution result
- */
-export interface SubagentResult {
-  /**
-   * Whether the subagent succeeded
-   */
-  success: boolean;
-
-  /**
-   * Output from the subagent
-   */
-  output: string;
-
-  /**
-   * Additional metadata
-   */
-  metadata?: any;
-}
-
-/**
  * Configuration for LLM client
  */
 export interface LLMClientConfig {

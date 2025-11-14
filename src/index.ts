@@ -10,7 +10,6 @@ export { ILLMClient, ILLMEventEmitter } from './client/interfaces';
 export {
   LLMMessage,
   LLMQueryOptions,
-  SubagentResult,
   LLMClientConfig
 } from './client/types';
 export { ClaudeSDKClient } from './client/ClaudeSDKClient';
@@ -68,6 +67,3 @@ export {
   ServerUnavailableError,
   ConfigurationError
 } from './errors';
-
-// Template system exports
-export * from './templates';

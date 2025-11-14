@@ -6,12 +6,9 @@
 
 import { EventEmitter } from 'events';
 import { ILLMClient } from './interfaces';
-import { LLMMessage, LLMQueryOptions, SubagentResult, LLMClientConfig } from './types';
+import { LLMMessage, LLMQueryOptions, LLMClientConfig } from './types';
 import { ClaudeSDKClient } from './ClaudeSDKClient';
 import { LocalLLMClient } from './LocalLLMClient';
-import { TemplateRegistry } from '../templates/registry';
-import { resolveTemplate } from '../templates/resolver';
-import type { ResolvedAgentConfig } from '../templates/types';
 
 /**
  * Unified LLM Client
@@ -24,7 +21,6 @@ export class LLMClient extends EventEmitter implements ILLMClient {
   private localClient: LocalLLMClient;
   private config: LLMClientConfig;
   private context?: string;
-  private registry?: TemplateRegistry;
 
   constructor(config: LLMClientConfig) {
     super();
@@ -125,13 +121,6 @@ export class LLMClient extends EventEmitter implements ILLMClient {
   }
 
   /**
-   * Execute a task using a subagent
-   */
-  async executeSubagent(name: string, task: string): Promise<SubagentResult> {
-    return await this.sdkClient.executeSubagent(name, task);
-  }
-
-  /**
    * Check if local LLM server is healthy
    */
   async isLocalServerHealthy(): Promise<boolean> {
@@ -148,79 +137,6 @@ export class LLMClient extends EventEmitter implements ILLMClient {
     uptime_seconds?: number;
   }> {
     return await this.localClient.getHealth();
-  }
-
-  /**
-   * Query LLM using an agent template
-   *
-   * Loads template from registry, resolves it with variables,
-   * converts to query options, and streams response using query()
-   *
-   * @param templateName - Name of the template to use
-   * @param variables - Variables for template interpolation
-   * @param options - Additional query options (merged with template config)
-   * @returns Async iterable of LLM messages
-   *
-   * @example
-   * ```typescript
-   * const client = new LLMClient({ claudeSDK: {} });
-   *
-   * // Use template with variables
-   * for await (const message of client.queryFromTemplate('code-reviewer-agent', {
-   *   targetFile: './src/index.ts',
-   *   outputPath: './review.md'
-   * })) {
-   *   console.log(message);
-   * }
-   * ```
-   */
-  async *queryFromTemplate(
-    templateName: string,
-    variables: Record<string, any>,
-    options?: Partial<LLMQueryOptions>
-  ): AsyncIterable<LLMMessage> {
-    // Lazy initialize registry
-    if (!this.registry) {
-      this.registry = new TemplateRegistry('./agent-templates');
-      await this.registry.scan();
-    }
-
-    // Get template from registry
-    const template = this.registry.getTemplate(templateName);
-    if (!template) {
-      throw new Error(
-        `Template not found: ${templateName}. Available templates: ${this.registry.listNames().join(', ')}`
-      );
-    }
-
-    // Resolve template with variables
-    const resolved: ResolvedAgentConfig = await resolveTemplate(template, variables);
-
-    // Convert ResolvedAgentConfig to LLMQueryOptions
-    const templateOptions: Partial<LLMQueryOptions> = {
-      systemPrompt: resolved.prompt,
-      allowedTools: resolved.tools,
-      model: resolved.settings.model,
-      temperature: resolved.settings.temperature,
-      maxTurns: resolved.settings.maxTurns,
-      permissionMode: resolved.settings.permissionMode as any,
-      workingDirectory: resolved.runtime.workingDirectory,
-      timeout: resolved.runtime.timeout,
-    };
-
-    // Merge template options with runtime options (runtime options take precedence)
-    const mergedOptions: Partial<LLMQueryOptions> = {
-      ...templateOptions,
-      ...options,
-    };
-
-    // Use system prompt as the query prompt
-    const prompt = resolved.prompt;
-
-    // Call existing query() method with merged options
-    for await (const message of this.query(prompt, mergedOptions)) {
-      yield message;
-    }
   }
 
   /**

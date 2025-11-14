@@ -1,7 +1,0 @@
-# Multi-document YAML with no valid tool configs
----
-notATool: true
----
-invalid: document
----
-another: invalid

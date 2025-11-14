@@ -329,46 +329,6 @@ describe('ClaudeSDKClient', () => {
     });
   });
 
-  describe('executeSubagent', () => {
-    it('should use Task tool for subagent execution', async () => {
-      async function* mockMessages() {
-        yield { type: 'result', subtype: 'success', result: 'Subagent output' };
-      }
-
-      mockQuery.mockReturnValue(mockMessages());
-
-      const result = await client.executeSubagent('test-agent', 'Test task');
-
-      expect(result.success).toBe(true);
-      expect(result.output).toBe('Subagent output');
-    });
-
-    it('should return failure for non-success results', async () => {
-      async function* mockMessages() {
-        yield { type: 'error', error: 'Failed' };
-      }
-
-      mockQuery.mockReturnValue(mockMessages());
-
-      const result = await client.executeSubagent('test-agent', 'Test task');
-
-      expect(result.success).toBe(false);
-    });
-
-    it('should include metadata in result', async () => {
-      async function* mockMessages() {
-        yield { type: 'text', text: 'Working...' };
-        yield { type: 'result', subtype: 'success', result: 'Done' };
-      }
-
-      mockQuery.mockReturnValue(mockMessages());
-
-      const result = await client.executeSubagent('test-agent', 'Test task');
-
-      expect(result.metadata).toHaveLength(2);
-    });
-  });
-
   describe('shutdown', () => {
     it('should remove all listeners', () => {
       const handler = vi.fn();

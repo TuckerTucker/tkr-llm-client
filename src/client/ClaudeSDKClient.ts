@@ -8,7 +8,7 @@
 import { EventEmitter } from 'events';
 import { query } from '@anthropic-ai/claude-agent-sdk';
 import { ILLMClient } from './interfaces';
-import { LLMMessage, LLMQueryOptions, SubagentResult, LLMClientConfig } from './types';
+import { LLMMessage, LLMQueryOptions, LLMClientConfig } from './types';
 import { extractThinkingBlocks } from '../utils/thinking';
 
 /**
@@ -246,27 +246,6 @@ export class ClaudeSDKClient extends EventEmitter implements ILLMClient {
     console.log(`✅ [Direct Query] Received ${content.length} chars`);
 
     return content;
-  }
-
-  /**
-   * Execute a task using a subagent
-   */
-  async executeSubagent(name: string, task: string): Promise<SubagentResult> {
-    const messages: LLMMessage[] = [];
-
-    for await (const message of this.query(
-      `Use the ${name} subagent to: ${task}`,
-      { allowedTools: ['Task'] }
-    )) {
-      messages.push(message);
-    }
-
-    const lastMessage = messages[messages.length - 1];
-    return {
-      success: lastMessage?.type === 'result' && lastMessage.subtype === 'success',
-      output: lastMessage?.type === 'result' && lastMessage.subtype === 'success' ? lastMessage.result || '' : '',
-      metadata: messages
-    };
   }
 
   /**

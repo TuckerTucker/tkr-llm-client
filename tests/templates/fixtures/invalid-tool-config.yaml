@@ -1,5 +1,0 @@
-# Tool config missing required name field
-tool:
-  # Missing name field
-  permissions:
-    requireConfirmation: true

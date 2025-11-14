@@ -242,22 +242,6 @@ describe('LLMClient', () => {
     });
   });
 
-  describe('executeSubagent', () => {
-    it('should delegate to SDK client', async () => {
-      async function* mockMessages() {
-        yield { type: 'result', subtype: 'success', result: 'Subagent result' };
-      }
-
-      mockQuery.mockReturnValue(mockMessages());
-
-      const result = await client.executeSubagent('test-agent', 'Test task');
-
-      expect(result.success).toBe(true);
-      expect(result.output).toBe('Subagent result');
-      expect(mockQuery).toHaveBeenCalled();
-    });
-  });
-
   describe('isLocalServerHealthy', () => {
     it('should check local server health', async () => {
       mockFetch.mockResolvedValue({
